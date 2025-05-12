@@ -3,11 +3,11 @@ import axios from 'axios';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    token: null as string | null,        // Token can be null initially
-    userId: null as number | null,       // Store user ID
-    users: [] as any[],                 // Store users (name, email, password) if needed
-    error: '' as string,                // Error message
-    isLoading: false,                   // Track loading state
+    token: null as string | null,         // Token can be null initially
+    userId: null as number | null,        // Store user ID
+    users: [] as any[],                   // Store users
+    error: '' as string,                  // Error message
+    isLoading: false                      // Track loading state
   }),
 
   actions: {
@@ -21,8 +21,8 @@ export const useUserStore = defineStore('user', {
           {
             headers: {
               'Content-Type': 'application/json',
-              'x-api-key': 'reqres-free-v1',
-            },
+              'x-api-key': 'reqres-free-v1'
+            }
           }
         );
         this.token = res.data.token;
@@ -40,62 +40,46 @@ export const useUserStore = defineStore('user', {
     // Register a new user
     async register(email: string, password: string) {
       try {
-        // Send only email and password as the API expects
         const res = await axios.post(
           'https://reqres.in/api/register',
-          {
-            email,
-            password,
-          },
+          { email, password },
           {
             headers: {
               'Content-Type': 'application/json',
-              'x-api-key': 'reqres-free-v1',  
-            },
+              'x-api-key': 'reqres-free-v1'
+            }
           }
         );
 
-        // Check if the token is received from the response
         if (!res.data.token) {
           throw new Error('Registration failed. Token not received.');
         }
-
-        // Check if the ID is received from the response
         if (!res.data.id) {
           throw new Error('Registration failed. ID not received.');
         }
 
-        // Store the token and userId in the state
         this.token = res.data.token;
         this.userId = res.data.id;
-
-        // Reset any previous errors
         this.error = '';
-
         console.log('Registration successful. Token:', this.token, 'User ID:', this.userId);
       } catch (error: any) {
-        // Handle error and log it
         console.error('Registration failed:', error);
-
-        // Check if the error response contains an error message
         if (error.response) {
           console.error('Error Response:', error.response);
           this.error = error.response?.data?.error || 'Registration failed';
         } else {
           this.error = 'Registration failed. Please try again.';
         }
-
-        // Throw the error after updating the state
         throw new Error(this.error);
       }
     },
 
     // Logout the user
     logout() {
-      this.token = null;   // Set token to null
-      this.userId = null;  // Set userId to null
-      this.users = [];     // Clear users
-      this.error = '';     // Clear error
+      this.token = null;
+      this.userId = null;
+      this.users = [];
+      this.error = '';
     },
 
     // Fetch users (for the dashboard)
@@ -105,12 +89,11 @@ export const useUserStore = defineStore('user', {
         if (!this.token) {
           throw new Error('User not authenticated.');
         }
-
         const res = await axios.get('https://reqres.in/api/users?page=1', {
           headers: {
             'x-api-key': 'reqres-free-v1',
-            'Authorization': `Bearer ${this.token}`,
-          },
+            'Authorization': `Bearer ${this.token}`
+          }
         });
         this.users = res.data.data;
         this.error = '';
@@ -120,6 +103,6 @@ export const useUserStore = defineStore('user', {
       } finally {
         this.isLoading = false;
       }
-    },
-  },
+    }
+  }
 });

@@ -3,15 +3,15 @@ import axios from 'axios';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    token: null as string | null,         // Token can be null initially
-    userId: null as number | null,        // Store user ID
-    users: [] as any[],                   // Store users
-    error: '' as string,                  // Error message
-    isLoading: false                      // Track loading state
+    token: null as string | null,
+    userId: null as number | null,
+    users: [] as any[],
+    error: '' as string,
+    isLoading: false,
+    currentPage: 1,
+    totalPages: 2
   }),
-
   actions: {
-    // Login method to authenticate the user
     async login(email: string, password: string) {
       this.isLoading = true;
       try {
@@ -29,15 +29,12 @@ export const useUserStore = defineStore('user', {
         this.error = '';
         console.log('Login token:', this.token);
       } catch (error: any) {
-        console.error('Login failed:', error);
         this.error = error.response?.data?.error || 'Login failed. Please check your credentials.';
         throw new Error(this.error);
       } finally {
         this.isLoading = false;
       }
     },
-
-    // Register a new user
     async register(email: string, password: string) {
       try {
         const res = await axios.post(
@@ -50,56 +47,47 @@ export const useUserStore = defineStore('user', {
             }
           }
         );
-
-        if (!res.data.token) {
-          throw new Error('Registration failed. Token not received.');
+        if (!res.data.token || !res.data.id) {
+          throw new Error('Registration failed. Token or ID not received.');
         }
-        if (!res.data.id) {
-          throw new Error('Registration failed. ID not received.');
-        }
-
         this.token = res.data.token;
         this.userId = res.data.id;
         this.error = '';
-        console.log('Registration successful. Token:', this.token, 'User ID:', this.userId);
       } catch (error: any) {
-        console.error('Registration failed:', error);
-        if (error.response) {
-          console.error('Error Response:', error.response);
-          this.error = error.response?.data?.error || 'Registration failed';
-        } else {
-          this.error = 'Registration failed. Please try again.';
-        }
+        this.error = error.response?.data?.error || 'Registration failed';
         throw new Error(this.error);
       }
     },
-
-    // Logout the user
     logout() {
       this.token = null;
       this.userId = null;
       this.users = [];
       this.error = '';
+      this.currentPage = 1;
     },
-
-    // Fetch users (for the dashboard)
-    async fetchUsers() {
+    async loadMoreUsers() {
+      if (!this.token) {
+        this.error = 'User not authenticated.';
+        return;
+      }
       this.isLoading = true;
       try {
-        if (!this.token) {
-          throw new Error('User not authenticated.');
-        }
-        const res = await axios.get('https://reqres.in/api/users?page=1', {
+        const res = await axios.get(`https://reqres.in/api/users?page=${this.currentPage}`, {
           headers: {
             'x-api-key': 'reqres-free-v1',
             'Authorization': `Bearer ${this.token}`
           }
         });
-        this.users = res.data.data;
+        const newUsers = res.data.data;
+        this.users.push(...newUsers);
         this.error = '';
+        if (this.currentPage >= this.totalPages) {
+          this.currentPage = 1;
+        } else {
+          this.currentPage++;
+        }
       } catch (error) {
-        console.error('Fetching users failed:', error);
-        this.error = 'Unable to fetch users at the moment.';
+        this.error = 'Unable to load users.';
       } finally {
         this.isLoading = false;
       }

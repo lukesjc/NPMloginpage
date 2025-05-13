@@ -20,46 +20,50 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import axios from "axios";
+import { defineComponent } from 'vue';
+import axios from 'axios';
 
 export default defineComponent({
-  name: "RegisterPage",
+  name: 'RegisterPage',
   data() {
     return {
-      email: "",
-      password: "",
-      error: "",
-      success: ""
+      email: '',
+      password: '',
+      error: '',
+      success: '',
     };
   },
   methods: {
     async handleRegister() {
       try {
         const response = await axios.post(
-          "https://reqres.in/api/register",
-          { email: this.email, password: this.password },
+          'https://reqres.in/api/register',
+          {
+            email: this.email,
+            password: this.password,
+          },
           {
             headers: {
-              "Content-Type": "application/json",
-              "x-api-key": "reqres-free-v1"
-            }
+              'Content-Type': 'application/json',
+              'x-api-key': 'reqres-free-v1',
+            },
           }
         );
+
         if (response.data.token) {
-          this.success = "Registration successful!";
-          this.error = "";
+          this.success = 'Registration successful!';
+          this.error = '';
         } else {
-          this.error = "Registration failed. Please try again.";
-          this.success = "";
+          this.error = 'Registration failed. Please try again.';
+          this.success = '';
         }
       } catch (error) {
-        console.error("Error:", error);
-        this.error = "An error occurred during registration. Please try again.";
-        this.success = "";
+        console.error('Error:', error);
+        this.error = 'An error occurred during registration. Please try again.';
+        this.success = '';
       }
-    }
-  }
+    },
+  },
 });
 </script>
 
@@ -68,7 +72,7 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100vh; /* Full viewport height */
   background-color: #f0f0f0;
 }
 
@@ -99,7 +103,7 @@ input {
 button {
   width: 100%;
   padding: 8px;
-  background-color: #4caf50;
+  background-color: #4CAF50;
   color: white;
   border: none;
   border-radius: 4px;

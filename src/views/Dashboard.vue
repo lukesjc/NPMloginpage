@@ -6,8 +6,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import DashboardPage from "../components/DashboardPage.vue";
+import { defineComponent } from 'vue';
+import DashboardPage from '../components/DashboardPage.vue';
 
 export default defineComponent({
   components: {
@@ -24,7 +24,7 @@ export default defineComponent({
   justify-content: center;
   height: 100vh;
   background-color: #ffffff;
-  font-family: "Arial", sans-serif;
+  font-family: 'Arial', sans-serif;
 }
 
 h1 {

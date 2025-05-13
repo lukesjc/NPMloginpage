@@ -8,24 +8,19 @@
           class="profile-gif"
         />
       </div>
-
       <div class="input-group">
         <h1>Sign In</h1>
         <label for="email">Email</label>
         <input type="text" id="email" v-model="email" required />
       </div>
-
       <div class="input-group">
         <label for="password">Password</label>
         <input type="password" id="password" v-model="password" required />
         <label href="#" class="forgot-password">Forgot Password?</label>
       </div>
-
       <button type="submit">Sign In</button>
-
       <div v-if="loginError" class="error-message">Invalid email or password</div>
     </form>
-
     <router-link to="/register">Register</router-link>
   </div>
 </template>
@@ -58,7 +53,7 @@ export default defineComponent({
         await store.login(this.email, this.password)
 
         // Success: Navigate to dashboard 
-        this.$router.push('/dashboard');
+        this.$router.push('/dashboard'); 
       } catch (error: any) {
         console.error('Login Error:', error)
         this.loginError = true

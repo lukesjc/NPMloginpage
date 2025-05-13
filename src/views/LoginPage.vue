@@ -1,8 +1,6 @@
 <template>
   <div class="login-container">
-    <router-view />
-
-    <a href="/" aria-label="Npm">
+    <a href="/" aria-label="Npm" class="logo-link">
       <svg viewBox="0 0 780 250" aria-hidden="true" class="npm-logo">
         <path
           fill="#231F20"
@@ -11,22 +9,19 @@
           stroke="#f7f7f7"
         />
       </svg>
-      <p> </p>
     </a>
-
     <LoginForm />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import LoginForm from '../components/LoginForm.vue'
-
+import { defineComponent } from 'vue';
+import LoginForm from '../components/LoginForm.vue';
 export default defineComponent({
   components: {
     LoginForm,
   },
-})
+});
 </script>
 
 <style scoped>
@@ -38,12 +33,14 @@ export default defineComponent({
   height: 100vh;
   background-color: #f0f2f5;
   font-family: 'Arial', sans-serif;
+  position: relative;
 }
 
-.logo-header {
+.logo-link {
   display: flex;
   justify-content: center;
   padding: 1rem;
+  margin-bottom: 2rem; /* Space between the logo and the form */
 }
 
 .npm-logo {
@@ -54,10 +51,6 @@ export default defineComponent({
 h1 {
   margin-bottom: 20px;
   color: #333;
-}
-
-.login-container {
-  position: relative;
 }
 
 .login-container::before {

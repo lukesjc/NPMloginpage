@@ -1,14 +1,8 @@
 <template>
   <div class="dashboard-wrapper">
     <h1>Welcome to Your Dashboard</h1>
-
-    <!-- Loading State -->
     <div v-if="isLoading"></div>
-
-    <!-- Error State -->
     <div v-else-if="error" class="error">{{ error }}</div>
-
-    <!-- Users List with Scroll -->
     <div
       class="user-scroll-container"
       ref="scrollContainer"
@@ -25,7 +19,6 @@
       </ul>
       <div v-if="isLoading" class="loading-more">Loading more...</div>
     </div>
-
     <!-- Logout Button -->
     <button @click="handleLogout">Logout</button>
   </div>
@@ -34,7 +27,6 @@
 <script lang="ts">
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useUserStore } from "@/stores/userStore";
-
 export default defineComponent({
   name: "DashboardPage",
   data() {
@@ -66,15 +58,11 @@ export default defineComponent({
     async handleScroll() {
       const el = this.scrollContainer;
       if (!el) return;
-
-      // Check if the user has scrolled to the bottom of the container
       const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 5;
-
       // If we're at the bottom and not already loading, load more users
       if (atBottom && !this.store.isLoading) {
         // If there are more users to load, increase the totalShown count
         const remainingUsers = this.users.length - this.totalShown;
-
         if (remainingUsers > 0) {
           this.totalShown += 10; // Increase by 10 users
         } else {
@@ -105,7 +93,6 @@ body {
   background-color: #fff;
   margin: 0;
 }
-
 .dashboard-wrapper {
   max-width: 600px;
   width: 100%;
@@ -117,7 +104,6 @@ body {
   flex-direction: column;
   gap: 1rem;
 }
-
 .user-scroll-container {
   height: 300px;
   overflow-y: auto;
@@ -129,7 +115,6 @@ body {
   flex-direction: column;
   gap: 0.75rem;
 }
-
 .user-list {
   list-style: none;
   padding: 0;
@@ -138,7 +123,6 @@ body {
   flex-direction: column;
   gap: 0.75rem;
 }
-
 .user-item {
   display: flex;
   align-items: center;
@@ -148,7 +132,6 @@ body {
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
   gap: 1rem;
 }
-
 .avatar {
   flex-shrink: 0;
   width: 50px;
@@ -156,12 +139,10 @@ body {
   border-radius: 50%;
   object-fit: cover;
 }
-
 .user-info {
   flex: 1;
   text-align: left;
 }
-
 button {
   padding: 0.75rem 1.5rem;
   background-color: #007bff;
@@ -173,13 +154,11 @@ button {
   align-self: flex-start;
   transition: background-color 0.25s ease;
 }
-
 button:hover,
 button:focus {
   background-color: #0056b3;
   outline: none;
 }
-
 .loading-more {
   text-align: center;
   font-size: 0.9rem;

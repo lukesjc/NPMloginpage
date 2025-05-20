@@ -15,10 +15,10 @@
       @scroll="handleScroll"
     >
       <ul class="user-list">
-        <li v-for="user in visibleUsers" :key="user.id" class="user-item">
+        <li v-for="user in visibleUsers" :key="user._id" class="user-item">
           <img :src="user.avatar" alt="Avatar" class="avatar" />
           <div class="user-info">
-            <strong>{{ user.first_name }} {{ user.last_name }}</strong>
+            <strong>{{ user.name }}</strong>
             <p>{{ user.email }}</p>
           </div>
         </li>
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent } from "vue";
 import { useUserStore } from "@/stores/userStore";
 
 export default defineComponent({
@@ -41,60 +41,68 @@ export default defineComponent({
     return {
       store: useUserStore(),
       scrollContainer: null as HTMLElement | null,
-      totalShown: 10, // Show 10 users initially
+      totalShown: 10,
     };
   },
   computed: {
-    users() {
+    users(): any[] {
       return this.store.users;
     },
-    visibleUsers() {
-      return this.users.slice(0, this.totalShown); // Show users based on totalShown
+    visibleUsers(): any[] {
+      if (this.users.length === 0) return [];
+      // Repeat users infinitely by cycling with modulo
+      const repeatedUsers = [];
+      for (let i = 0; i < this.totalShown; i++) {
+        repeatedUsers.push(this.users[i % this.users.length]);
+      }
+      return repeatedUsers;
     },
-    isLoading() {
+    isLoading(): boolean {
       return this.store.isLoading;
     },
-    error() {
+    error(): string {
       return this.store.error;
     },
   },
   methods: {
     async handleLogout() {
       this.store.logout();
-      this.$router.push("/"); // Redirect to login page on logout
+      this.$router.push("/");
     },
     async handleScroll() {
       const el = this.scrollContainer;
       if (!el) return;
 
-      // Check if the user has scrolled to the bottom of the container
       const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 5;
 
-      // If we're at the bottom and not already loading, load more users
-      if (atBottom && !this.store.isLoading) {
-        // If there are more users to load, increase the totalShown count
-        const remainingUsers = this.users.length - this.totalShown;
+      if (atBottom && !this.isLoading) {
+        const remaining = this.users.length - this.totalShown;
 
-        if (remainingUsers > 0) {
-          this.totalShown += 10; // Increase by 10 users
+        if (remaining > 0) {
+          this.totalShown += 10;
         } else {
-          await this.store.loadMoreUsers();
+          // No more users to load from backend, reset totalShown for looping
+          this.totalShown = 10;
+
+          // Reset scroll position to top for seamless looping
+          el.scrollTop = 0;
         }
       }
     },
   },
   async mounted() {
     if (!this.store.token) {
-      this.$router.push("/"); // Redirect to login if no token
+      this.$router.push("/");
     } else {
-      // Load initial users on mount
       await this.store.loadMoreUsers();
       this.scrollContainer = this.$refs.scrollContainer as HTMLElement;
     }
   },
 });
 </script>
+
 <style scoped>
+/* Styles unchanged from your original version */
 body {
   display: flex;
   justify-content: center;

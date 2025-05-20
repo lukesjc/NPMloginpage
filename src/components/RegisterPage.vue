@@ -4,6 +4,10 @@
       <form @submit.prevent="handleRegister">
         <div class="input-group">
           <h1>Register</h1>
+          <label for="name">Name</label>
+          <input type="text" id="name" v-model="name" required />
+        </div>
+        <div class="input-group">
           <label for="email">Email</label>
           <input type="email" id="email" v-model="email" required />
         </div>
@@ -11,7 +15,9 @@
           <label for="password">Password</label>
           <input type="password" id="password" v-model="password" required />
         </div>
-        <button type="submit">Register</button>
+        <button type="submit" :disabled="isLoading">
+          {{ isLoading ? 'Registering...' : 'Register' }}
+        </button>
         <div v-if="error" class="error-message">{{ error }}</div>
         <div v-if="success" class="success-message">{{ success }}</div>
       </form>
@@ -27,40 +33,46 @@ export default defineComponent({
   name: 'RegisterPage',
   data() {
     return {
+      name: '',
       email: '',
       password: '',
       error: '',
       success: '',
+      isLoading: false,
     };
   },
   methods: {
     async handleRegister() {
+      this.isLoading = true;
       try {
         const response = await axios.post(
-          'https://reqres.in/api/register',
+          'http://localhost:5000/api/users/register',
           {
+            name: this.name,
             email: this.email,
             password: this.password,
-          },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': 'reqres-free-v1',
-            },
           }
         );
 
         if (response.data.token) {
           this.success = 'Registration successful!';
           this.error = '';
+          this.name = '';
+          this.email = '';
+          this.password = '';
         } else {
           this.error = 'Registration failed. Please try again.';
           this.success = '';
         }
       } catch (error) {
-        console.error('Error:', error);
-        this.error = 'An error occurred during registration. Please try again.';
+        if (axios.isAxiosError(error) && error.response) {
+          this.error = error.response.data.message || 'Registration failed.';
+        } else {
+          this.error = 'Network error. Please try again later.';
+        }
         this.success = '';
+      } finally {
+        this.isLoading = false;
       }
     },
   },
@@ -108,9 +120,15 @@ button {
   border: none;
   border-radius: 4px;
   font-size: 16px;
+  cursor: pointer;
 }
 
-button:hover {
+button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+}
+
+button:hover:enabled {
   background-color: #45a049;
 }
 

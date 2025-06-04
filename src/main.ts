@@ -1,9 +1,8 @@
-import { createApp } from 'vue';
+import { createApp, onMounted } from 'vue';
 import App from './App.vue';
 import { createPinia } from 'pinia';
 import router from './router';
 import { useUserStore } from './stores/userStore';
-import { onMounted } from 'vue';
 
 // Create the Pinia store instance
 const pinia = createPinia();
@@ -17,11 +16,8 @@ app.use(pinia);
 // Use Vue Router for routing
 app.use(router);
 
-const userStore=useUserStore();
-onMounted(() => {
-  const store = useUserStore();
-  store.restoreTokenFromLocalStorage();
-});
-
-// Mount the app to the DOM
+// Restore token from localStorage after app is created
 app.mount('#app');
+
+const userStore = useUserStore();
+userStore.restoreTokenFromLocalStorage();

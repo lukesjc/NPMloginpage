@@ -2,13 +2,9 @@
   <div class="dashboard-wrapper">
     <h1>Welcome to Your Dashboard</h1>
 
-    <!-- Loading State -->
     <div v-if="isLoading"></div>
-
-    <!-- Error State -->
     <div v-else-if="error" class="error">{{ error }}</div>
 
-    <!-- Users List with Scroll -->
     <div
       class="user-scroll-container"
       ref="scrollContainer"
@@ -50,7 +46,6 @@ export default defineComponent({
     },
     visibleUsers(): any[] {
       if (this.users.length === 0) return [];
-      // Repeat users infinitely by cycling with modulo
       const repeatedUsers = [];
       for (let i = 0; i < this.totalShown; i++) {
         repeatedUsers.push(this.users[i % this.users.length]);
@@ -76,15 +71,13 @@ export default defineComponent({
       const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 5;
 
       if (atBottom && !this.isLoading) {
-        const remaining = this.users.length - this.totalShown;
+        const remainingUsers = this.users.length - this.totalShown;
 
-        if (remaining > 0) {
+        if (remainingUsers > 0) {
           this.totalShown += 10;
         } else {
-          // No more users to load from backend, reset totalShown for looping
+          // Loop back: reset to initial shown and scroll to top
           this.totalShown = 10;
-
-          // Reset scroll position to top for seamless looping
           el.scrollTop = 0;
         }
       }
@@ -102,7 +95,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* Styles unchanged from your original version */
 body {
   display: flex;
   justify-content: center;
@@ -113,7 +105,6 @@ body {
   background-color: #fff;
   margin: 0;
 }
-
 .dashboard-wrapper {
   max-width: 600px;
   width: 100%;
@@ -125,7 +116,6 @@ body {
   flex-direction: column;
   gap: 1rem;
 }
-
 .user-scroll-container {
   height: 300px;
   overflow-y: auto;
@@ -137,7 +127,6 @@ body {
   flex-direction: column;
   gap: 0.75rem;
 }
-
 .user-list {
   list-style: none;
   padding: 0;
@@ -146,7 +135,6 @@ body {
   flex-direction: column;
   gap: 0.75rem;
 }
-
 .user-item {
   display: flex;
   align-items: center;
@@ -156,7 +144,6 @@ body {
   box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
   gap: 1rem;
 }
-
 .avatar {
   flex-shrink: 0;
   width: 50px;
@@ -164,12 +151,10 @@ body {
   border-radius: 50%;
   object-fit: cover;
 }
-
 .user-info {
   flex: 1;
   text-align: left;
 }
-
 button {
   padding: 0.75rem 1.5rem;
   background-color: #007bff;
@@ -181,13 +166,11 @@ button {
   align-self: flex-start;
   transition: background-color 0.25s ease;
 }
-
 button:hover,
 button:focus {
   background-color: #0056b3;
   outline: none;
 }
-
 .loading-more {
   text-align: center;
   font-size: 0.9rem;

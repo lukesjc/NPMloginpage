@@ -86,6 +86,7 @@ nav a:first-of-type {
     padding: 1rem 0;
     gap: 2rem;  /* Increased space between links */
   }
+  
 }
 
 </style>

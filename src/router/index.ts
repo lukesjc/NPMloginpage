@@ -3,11 +3,13 @@ import LoginPage from '../views/LoginPage.vue';
 import RegisterPage from '@/components/RegisterPage.vue';
 import Dashboard from '@/views/Dashboard.vue';
 import { useUserStore } from '@/stores/userStore';
+import MeterCheck from '@/components/MeterCheck.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
   { path: '/register', name: 'Register', component: RegisterPage },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard,meta:{ requiresAuth:true} },
+  { path: "/meter-check",name: "MeterCheck",component: MeterCheck},
 ];
 
 const router = createRouter({
